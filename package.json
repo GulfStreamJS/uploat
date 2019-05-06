@@ -16,9 +16,6 @@
     "server"
   ],
   "license": "MIT",
-  "bin": {
-    "downloat": "bin/uploat.js"
-  },
   "repository": {
     "type": "git",
     "url": "https://github.com/GulfStreamJS/uploat.git"
