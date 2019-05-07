@@ -25,9 +25,9 @@ module.exports = params => {
             let percent = 0, previous = 0, load = 0, disable = 0;
             let size = fs.lstatSync(path.join(file.path)).size;
             let r = request.post({
-                url: params.upload_url,
+                url: params.uploat.url,
                 formData: {
-                    ...params.upload_params,
+                    ...params.uploat.params,
                     file: fs.createReadStream(path.join(file.path))
                 },
                 headers: {
@@ -38,11 +38,11 @@ module.exports = params => {
             }, (error, res, body) => {
                 clearInterval(si);
                 if (error) {
-                    params.downloat[id].upload = {status: 'error'};
-                    bar.tick(bar.total - bar.curr, {title: 'ERROR'});
+                    params.downloat[id].uploat = {error: 'ERROR REQUEST'};
+                    bar.tick(bar.total - bar.curr, {title: 'ERROR REQUEST'});
                     return resolve(params);
                 }
-                params.downloat[id].upload = typeof body === 'object'
+                params.downloat[id].uploat = typeof body === 'object'
                     ? body
                     : JSON.parse(body);
                 bar.tick(bar.total - bar.curr, {title: 'UPLOAT'});
@@ -66,7 +66,7 @@ module.exports = params => {
                     disable++;
                     if (disable >= 7200) {
                         clearInterval(si);
-                        params.downloat[id].upload = {status: 'connection'};
+                        params.downloat[id].uploat = {error: 'NO CONNECTION'};
                         bar.tick(0, {title: 'NO CONNECTION'});
                         fs.writeFileSync(path.join(dir, file.sha1 + '.json'), JSON.stringify({
                             "error": "NO CONNECTION"

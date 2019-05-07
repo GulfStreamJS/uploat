@@ -29,10 +29,12 @@ uploat({
             "sha1": "e8999dc72d58d108990ae9983bd22943013f9788"
         }
     ],
-    upload_url: 'https://upload.youtube.com',
-    upload_params: {
-        is_xhr: 'true',
-        sess_id : 'ir4IlIIfEyreRFR'
+    uploat: {
+        url: 'https://uploat.youtube.com', 
+        params: {
+            is_xhr: 'true',
+            sess_id : 'ir4IlIIfEyreRFR'
+        }
     }
 }).then(params => {
     console.log(params);
@@ -43,11 +45,16 @@ uploat({
 //       size: 90145915,
 //       name: 'My.Puppy.mp4',
 //       sha1: 'e8999dc72d58d108990ae9983bd22943013f9788',
-//       upload: {
+//       uploat: {
 //          status: 'success',
 //          code: 'dQw4w9WgXcQ' } } ],
-//  upload_url: 'https://upload.youtube.com',
-//  upload_params: { is_xhr: 'true', sess_id: 'ir4IlIIfEyreRFR' }
+//  uploat: {
+//      url: 'https://uploat.youtube.com', 
+//      params: {
+//          is_xhr: 'true',
+//          sess_id : 'ir4IlIIfEyreRFR'
+//      }
+//  }
 ```
 
 ## API
@@ -56,17 +63,11 @@ uploat({
 
 Type: `array`
 
-Required parameter `path`, the path to the file.
-Data can be obtained at the output of the <a href="https://github.com/GulfStreamJS/downloat" target="_blank">downloat</a> package.
+Required parameter `path`, the path to the file. Data can be obtained at the output of the <a href="https://github.com/GulfStreamJS/downloat" target="_blank">downloat</a> package.
 
-#### upload_url
-
-Type: `string`
-
-The server URL to which the file will be sent.
-
-#### upload_params
+#### uploat
 
 Type: `object`
 
-Parameters for authorization and other data.
+- `url`  the server URL to which the file will be sent;
+- `params` parameters for authorization and other data.
