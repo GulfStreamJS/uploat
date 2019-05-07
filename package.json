@@ -1,6 +1,6 @@
 {
   "name": "uploat",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "Upload large video files to a remote server.",
   "main": "uploat.js",
   "keywords": [
@@ -25,8 +25,8 @@
   },
   "homepage": "https://gulfstream.to",
   "dependencies": {
-    "follow-redirects": "latest",
-    "downloading": "latest",
-    "request": "latest"
+    "follow-redirects": "1.7.0",
+    "downloading": "0.0.1",
+    "request": "2.88.0"
   }
 }

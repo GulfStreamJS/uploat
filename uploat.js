@@ -45,7 +45,7 @@ module.exports = params => {
                 params.downloat[id].upload = typeof body === 'object'
                     ? body
                     : JSON.parse(body);
-                bar.tick(bar.total - bar.curr, {title: 'DONE'});
+                bar.tick(bar.total - bar.curr, {title: 'UPLOAT'});
                 fs.writeFileSync(path.join(dir, file.sha1 + '.json'), JSON.stringify(
                     params.downloat[id], null, 2));
                 return resolve(params);
