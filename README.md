@@ -71,3 +71,21 @@ Type: `object`
 
 - `url`  the server URL to which the file will be sent;
 - `params` parameters for authorization and other data.
+
+#### season
+
+Type: `number|array`
+
+Upload only certain season(s).
+
+#### episode
+
+Type: `number|array`
+
+Upload only certain episode(s).
+
+#### source
+
+Type: `string`
+
+The name for the log file.

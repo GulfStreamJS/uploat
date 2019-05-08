@@ -7,7 +7,11 @@ const fs = require('fs');
 follow_redirects.maxRedirects = 10;
 follow_redirects.maxBodyLength = 500 * 1024 * 1024 * 1024;
 
-module.exports = params => {
+module.exports = (params = {}) => {
+
+    let name = params.source
+        ? params.source.replace(/[^a-z0-9]/i, '_') + '.json'
+        : 'uploat.json';
 
     let dir = params.path
         ? params.path
@@ -46,8 +50,8 @@ module.exports = params => {
                     ? body
                     : JSON.parse(body);
                 bar.tick(bar.total - bar.curr, {title: 'UPLOAT'});
-                fs.writeFileSync(path.join(dir, file.sha1 + '.json'), JSON.stringify(
-                    params.downloat[id], null, 2));
+                fs.writeFileSync(path.join(dir, name), JSON.stringify(
+                    params.downloat, null, 2));
                 return resolve(params);
             });
             let si = setInterval(() => {
@@ -58,19 +62,17 @@ module.exports = params => {
                 });
                 if (percent !== previous) {
                     previous = percent;
-                    fs.writeFileSync(path.join(dir, file.sha1 + '.json'), JSON.stringify({
-                        "name": file.name,
-                        "status": percent
-                    }, null, 2));
+                    params.downloat[id].uploat = {percent: percent};
+                    fs.writeFileSync(path.join(dir, name), JSON.stringify(
+                        params.downloat, null, 2));
                 } else {
                     disable++;
                     if (disable >= 7200) {
                         clearInterval(si);
                         params.downloat[id].uploat = {error: 'NO CONNECTION'};
                         bar.tick(0, {title: 'NO CONNECTION'});
-                        fs.writeFileSync(path.join(dir, file.sha1 + '.json'), JSON.stringify({
-                            "error": "NO CONNECTION"
-                        }, null, 2));
+                        fs.writeFileSync(path.join(dir, name), JSON.stringify(
+                            params.downloat, null, 2));
                         return resolve(params);
                     }
                 }

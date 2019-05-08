@@ -1,8 +1,8 @@
 {
   "name": "uploat",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "description": "Upload large video files to a remote server.",
-  "main": "uploat.js",
+  "main": "index.js",
   "keywords": [
     "video",
     "file",
