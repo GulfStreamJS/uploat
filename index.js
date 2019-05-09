@@ -115,41 +115,40 @@ module.exports = (params = {}) => {
             return params.downloat && !params.downloat.error && params.downloat.length
                 ? params.downloat.filter(file => {
                     if (params.season && params.episode) {
-                        if (!file.season || !file.episode) return false;
-                        if (typeof file.season === 'number') {
-                            file.season = file.season.toString();
-                        }
-                        if (typeof file.episode === 'number') {
-                            file.episode = file.episode.toString();
-                        }
+                        if (typeof file.season === 'undefined' ||
+                            typeof file.episode === 'undefined') return false;
+                        let s = typeof file.season === 'number'
+                            ? file.season.toString()
+                            : file.season;
+                        let e = typeof file.episode === 'number'
+                            ? file.episode.toString()
+                            : file.episode;
                         if (typeof params.season === 'number') {
                             params.season = params.season.toString();
-                        }
-                        else if (typeof params.season === 'object') {
+                        } else if (typeof params.season === 'object') {
                             params.season = params.season.map(season => season
                                 .toString()
                                 .replace(/[^0-9]/, ''));
                         }
                         if (typeof params.episode === 'number') {
                             params.episode = params.episode.toString();
-                        }
-                        else if (typeof params.episode === 'object') {
+                        } else if (typeof params.episode === 'object') {
                             params.episode = params.episode.map(episode => episode
                                 .toString()
                                 .replace(/[^0-9]/, ''));
                         }
                         return ((
                             typeof params.season === 'string' &&
-                            params.season === file.season
+                            params.season === s
                         ) || (
                             typeof params.season === 'object' &&
-                            params.season.indexOf(file.season) + 1
+                            params.season.indexOf(s) + 1
                         )) && ((
                             typeof params.episode === 'string' &&
-                            params.episode === file.episode
+                            params.episode === e
                         ) || (
                             typeof params.episode === 'object' &&
-                            params.episode.indexOf(file.episode) + 1
+                            params.episode.indexOf(e) + 1
                         ));
                     }
                     return true;
