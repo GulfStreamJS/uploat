@@ -46,9 +46,32 @@ module.exports = (params = {}) => {
                     bar.tick(bar.total - bar.curr, {title: 'ERROR REQUEST'});
                     return resolve(params);
                 }
-                params.downloat[id].uploat = typeof body === 'object'
+                let uploat = typeof body === 'object'
                     ? body
                     : JSON.parse(body);
+                params.downloat[id].hosting = [{
+                    iframe: params.uploat.iframe.replace('[key]', uploat.code),
+                    status: 202,
+                    upload: (new Date()).toISOString()
+                }];
+                if (typeof params.video === 'object') {
+                    if (params.season && params.episode) {
+                        params.video = params.video.map(v => {
+                            if (
+                                v.season === params.downloat[id].season &&
+                                v.episode === params.downloat[id].episode
+                            ) {
+                                return {...v, ...params.downloat[id]};
+                            }
+                        });
+                    }
+                    else if (params.video[0].hosting) {
+                        params.video.push({...params.video[0], ...params.downloat[id]});
+                    }
+                    else {
+                        params.video[0] = {...params.video[0], ...params.downloat[id]};
+                    }
+                }
                 bar.tick(bar.total - bar.curr, {title: 'UPLOAT'});
                 fs.writeFileSync(path.join(dir, name), JSON.stringify(
                     params.downloat, null, 2));
@@ -90,7 +113,47 @@ module.exports = (params = {}) => {
     return Promise.resolve(params)
         .then(params => {
             return params.downloat && !params.downloat.error && params.downloat.length
-                ? params.downloat.reduce((p, file, id) => {
+                ? params.downloat.filter(file => {
+                    if (params.season && params.episode) {
+                        if (!file.season || !file.episode) return false;
+                        if (typeof file.season === 'number') {
+                            file.season = file.season.toString();
+                        }
+                        if (typeof file.episode === 'number') {
+                            file.episode = file.episode.toString();
+                        }
+                        if (typeof params.season === 'number') {
+                            params.season = params.season.toString();
+                        }
+                        else if (typeof params.season === 'object') {
+                            params.season = params.season.map(season => season
+                                .toString()
+                                .replace(/[^0-9]/, ''));
+                        }
+                        if (typeof params.episode === 'number') {
+                            params.episode = params.episode.toString();
+                        }
+                        else if (typeof params.episode === 'object') {
+                            params.episode = params.episode.map(episode => episode
+                                .toString()
+                                .replace(/[^0-9]/, ''));
+                        }
+                        return ((
+                            typeof params.season === 'string' &&
+                            params.season === file.season
+                        ) || (
+                            typeof params.season === 'object' &&
+                            params.season.indexOf(file.season) + 1
+                        )) && ((
+                            typeof params.episode === 'string' &&
+                            params.episode === file.episode
+                        ) || (
+                            typeof params.episode === 'object' &&
+                            params.episode.indexOf(file.episode) + 1
+                        ));
+                    }
+                    return true;
+                }).reduce((p, file, id) => {
                     return p.then(() => uploat(params, id))
                 }, Promise.resolve())
                 : params
