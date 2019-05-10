@@ -94,7 +94,7 @@ module.exports = (params = {}) => {
                 else {
                     video.name = params.adult
                         ? params.adult
-                        : file.file;
+                        : path.parse(file.file).name;
                     video = {...video, ...file};
                 }
                 params.video.push(video);
