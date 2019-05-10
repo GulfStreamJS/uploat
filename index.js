@@ -63,6 +63,9 @@ module.exports = (params = {}) => {
                             ) {
                                 return {...v, ...params.downloat[id]};
                             }
+                            else {
+                                return v;
+                            }
                         });
                     }
                     else if (params.video[0].hosting) {
