@@ -10,7 +10,7 @@ follow_redirects.maxBodyLength = 500 * 1024 * 1024 * 1024;
 module.exports = (params = {}) => {
 
     let name = params.source
-        ? params.source.replace(/[^a-z0-9]/i, '_') + '.json'
+        ? params.source.replace(/[^a-z0-9]/i, '_').toUpperCase() + '.json'
         : 'uploat.json';
 
     let dir = params.path
@@ -79,8 +79,8 @@ module.exports = (params = {}) => {
             });
             let si = setInterval(() => {
                 bar.tick(load, {
-                    title: file.name
-                        ? file.name
+                    title: file.file
+                        ? file.file
                         : 'SERVER CONNECTION'
                 });
                 if (percent !== previous) {
