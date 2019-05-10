@@ -46,35 +46,58 @@ module.exports = (params = {}) => {
                     bar.tick(bar.total - bar.curr, {title: 'ERROR REQUEST'});
                     return resolve(params);
                 }
+                params.video = params.video
+                    ? params.video
+                    : [];
                 let uploat = typeof body === 'object'
                     ? body
                     : JSON.parse(body);
-                params.downloat[id].hosting = [{
-                    iframe: params.uploat.iframe.replace('[key]', uploat.code),
-                    status: 202,
-                    upload: (new Date()).toISOString()
-                }];
-                if (typeof params.video === 'object') {
-                    if (params.season && params.episode) {
-                        params.video = params.video.map(v => {
-                            if (
-                                v.season === params.downloat[id].season &&
-                                v.episode === params.downloat[id].episode
-                            ) {
-                                return {...v, ...params.downloat[id]};
-                            }
-                            else {
-                                return v;
-                            }
-                        });
-                    }
-                    else if (params.video[0].hosting) {
-                        params.video.push({...params.video[0], ...params.downloat[id]});
+                let video = {
+                    hosting: [{
+                        iframe: params.uploat.iframe.replace('[key]', uploat.code),
+                        status: 202,
+                        upload: (new Date()).toISOString()
+                    }]
+                };
+                if (params.voice) {
+                    video.voice = params.voice;
+                }
+                if (params.subtitle) {
+                    video.subtitle = params.subtitle;
+                }
+                if (params.quality) {
+                    video.quality = params.quality;
+                }
+                if (params.release) {
+                    video.release = params.release;
+                }
+                if (typeof params.episodes === 'object') {
+                    let exists = false;
+                    params.episodes.forEach((episode, i) => {
+                        if (
+                            episode.season === file.season &&
+                            episode.episode === file.episode
+                        ) {
+                            exists = i+1;
+                        }
+                    });
+                    video.name = 'Episode #' +
+                        params.episodes[exists-1].season + '.' +
+                        params.episodes[exists-1].episode;
+                    if (exists) {
+                        video = {...video, ...file, ...params.episodes[exists-1]};
                     }
                     else {
-                        params.video[0] = {...params.video[0], ...params.downloat[id]};
+                        video = {...video, ...file};
                     }
                 }
+                else {
+                    video.name = params.adult
+                        ? params.adult
+                        : file.file;
+                    video = {...video, ...file};
+                }
+                params.video.push(video);
                 bar.tick(bar.total - bar.curr, {title: 'UPLOAT'});
                 fs.writeFileSync(path.join(dir, name), JSON.stringify(
                     params.downloat, null, 2));
@@ -156,8 +179,8 @@ module.exports = (params = {}) => {
                     }
                     return true;
                 }).reduce((p, file, id) => {
-                    return p.then(() => uploat(params, id))
-                }, Promise.resolve())
+                    return p.then(params => uploat(params, id))
+                }, Promise.resolve(params))
                 : params
         });
 
