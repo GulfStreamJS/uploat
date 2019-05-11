@@ -10,7 +10,7 @@ follow_redirects.maxBodyLength = 500 * 1024 * 1024 * 1024;
 module.exports = (params = {}) => {
 
     let name = params.source
-        ? params.source.replace(/[^a-z0-9]/i, '_').toUpperCase() + '.json'
+        ? params.source.replace(/[^a-z0-9]/ig, '_').toUpperCase() + '.json'
         : 'uploat.json';
 
     let dir = params.path
