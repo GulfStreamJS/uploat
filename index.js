@@ -97,9 +97,15 @@ module.exports = (params = {}) => {
                     }
                 }
                 else {
-                    video.name = params.adult
-                        ? params.adult
-                        : path.parse(file.file).name;
+                    video.name = (
+                        params.name &&
+                        !params.imdb_id &&
+                        !params.tmdb_id &&
+                        !params.kp_id &&
+                        !params.douban_id
+                    )
+                        ? params.name
+                        : path.parse(file.file).name.replace(/(\.|_)/g, ' ');
                     video = {...video, ...file};
                 }
                 params.video.push(video);
