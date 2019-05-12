@@ -38,8 +38,7 @@ module.exports = (params = {}) => {
                 headers: {
                     'Authorization': params.oauth.authorization || '',
                     'Content-Type': 'multipart/form-data',
-                    'Cache-Control': 'no-cache',
-                    'Content-Length': size
+                    'Cache-Control': 'no-cache'
                 },
                 json: true
             }, (error, res, body) => {
