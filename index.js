@@ -30,13 +30,13 @@ module.exports = (params = {}) => {
             let percent = 0, previous = 0, load = 0, disable = 0;
             let size = fs.lstatSync(path.join(file.path)).size;
             let r = request.post({
-                url: params.uploat.url,
+                url: params.oauth.url,
                 formData: {
-                    ...params.uploat.params,
+                    ...params.oauth.params,
                     file: fs.createReadStream(path.join(file.path))
                 },
                 headers: {
-                    'Authorization': params.uploat.authorization || '',
+                    'Authorization': params.oauth.authorization || '',
                     'Content-Type': 'multipart/form-data',
                     'Cache-Control': 'no-cache',
                     'Content-Length': size
@@ -49,7 +49,7 @@ module.exports = (params = {}) => {
                     bar.tick(bar.total - bar.curr, {title: 'ERROR REQUEST'});
                     return resolve(params);
                 }
-                let iframe = getframe(params.uploat, body);
+                let iframe = getframe(params.oauth, body);
                 if (!iframe) {
                     params.downloat[id].uploat = {error: 'ERROR IFRAME'};
                     bar.tick(bar.total - bar.curr, {title: 'ERROR IFRAME'});
