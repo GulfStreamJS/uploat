@@ -30,10 +30,10 @@ uploat({
         }
     ],
     uploat: {
-        url: 'https://uploat.youtube.com', 
+        url: 'https://www.googleapis.com/upload/drive/v3/files?uploadType=multipart',
+        authorization: 'Bearer [YOUR_AUTH_TOKEN]',
         params: {
-            is_xhr: 'true',
-            sess_id : 'ir4IlIIfEyreRFR'
+            sess_id : '[SESS_ID]'
         }
     }
 }).then(params => {
@@ -49,10 +49,10 @@ uploat({
 //          status: 'success',
 //          code: 'dQw4w9WgXcQ' } } ],
 //  uploat: {
-//      url: 'https://uploat.youtube.com', 
+//      url: 'https://www.googleapis.com/upload/drive/v3/files?uploadType=multipart',
+//      authorization: 'Bearer [YOUR_AUTH_TOKEN]', 
 //      params: {
-//          is_xhr: 'true',
-//          sess_id : 'ir4IlIIfEyreRFR'
+//          sess_id : '[SESS_ID]'
 //      }
 //  }
 ```

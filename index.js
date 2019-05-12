@@ -1,5 +1,6 @@
 const follow_redirects = require('follow-redirects');
 const Downloading = require('downloading');
+const getframe = require('getframe');
 const request = require('request');
 const path = require('path');
 const fs = require('fs');
@@ -35,8 +36,10 @@ module.exports = (params = {}) => {
                     file: fs.createReadStream(path.join(file.path))
                 },
                 headers: {
+                    'Authorization': params.uploat.authorization || '',
                     'Content-Type': 'multipart/form-data',
-                    'Cache-Control': 'no-cache'
+                    'Cache-Control': 'no-cache',
+                    'Content-Length': size
                 },
                 json: true
             }, (error, res, body) => {
@@ -46,15 +49,18 @@ module.exports = (params = {}) => {
                     bar.tick(bar.total - bar.curr, {title: 'ERROR REQUEST'});
                     return resolve(params);
                 }
+                let iframe = getframe(params.uploat, body);
+                if (!iframe) {
+                    params.downloat[id].uploat = {error: 'ERROR IFRAME'};
+                    bar.tick(bar.total - bar.curr, {title: 'ERROR IFRAME'});
+                    return resolve(params);
+                }
                 params.video = params.video
                     ? params.video
                     : [];
-                let uploat = typeof body === 'object'
-                    ? body
-                    : JSON.parse(body);
                 let video = {
-                    hosting: [{
-                        iframe: params.uploat.iframe.replace('[key]', uploat.code),
+                    storage: [{
+                        iframe: iframe,
                         status: 202,
                         upload: (new Date()).toISOString()
                     }]
