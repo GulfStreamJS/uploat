@@ -29,17 +29,49 @@ module.exports = (params = {}) => {
         return new Promise(resolve => {
             let percent = 0, previous = 0, load = 0, disable = 0;
             let size = fs.lstatSync(path.join(file.path)).size;
+            let si = setInterval(() => {
+                bar.tick(load, {
+                    title: file.file
+                        ? file.file
+                        : 'SERVER CONNECTION'
+                });
+                if (percent !== previous) {
+                    previous = percent;
+                    params.downloat[id].uploat = {percent: percent};
+                    fs.writeFileSync(path.join(dir, name), JSON.stringify(
+                        params.downloat, null, 2));
+                } else {
+                    disable++;
+                    if (disable >= 7200) {
+                        if (si) clearInterval(si);
+                        params.downloat[id].uploat = {error: 'NO CONNECTION'};
+                        bar.tick(0, {title: 'NO CONNECTION'});
+                        fs.writeFileSync(path.join(dir, name), JSON.stringify(
+                            params.downloat, null, 2));
+                        return resolve(params);
+                    }
+                }
+                percent = r && parseInt((r.req.connection._bytesDispatched * 100 / size).toFixed(0)) > 0
+                    ? parseInt((r.req.connection._bytesDispatched * 100 / size).toFixed(0))
+                    : 0;
+                load = percent - bar.curr - 0.05 > 0
+                    ? percent - bar.curr - 0.05
+                    : 0;
+            }, 500);
+            let headers = {
+                'Content-Type': 'multipart/form-data',
+                'Cache-Control': 'no-cache'
+            };
+            if (params.oauth.authorization) {
+                headers['Authorization'] = params.oauth.authorization;
+            }
             let r = request.post({
                 url: params.oauth.url,
                 formData: {
                     ...params.oauth.params,
                     file: fs.createReadStream(path.join(file.path))
                 },
-                headers: {
-                    'Authorization': params.oauth.authorization || '',
-                    'Content-Type': 'multipart/form-data',
-                    'Cache-Control': 'no-cache'
-                },
+                headers: headers,
                 json: true
             }, (error, res, body) => {
                 if (si) clearInterval(si);
@@ -114,35 +146,6 @@ module.exports = (params = {}) => {
                     params.downloat, null, 2));
                 return resolve(params);
             });
-            let si = setInterval(() => {
-                bar.tick(load, {
-                    title: file.file
-                        ? file.file
-                        : 'SERVER CONNECTION'
-                });
-                if (percent !== previous) {
-                    previous = percent;
-                    params.downloat[id].uploat = {percent: percent};
-                    fs.writeFileSync(path.join(dir, name), JSON.stringify(
-                        params.downloat, null, 2));
-                } else {
-                    disable++;
-                    if (disable >= 7200) {
-                        if (si) clearInterval(si);
-                        params.downloat[id].uploat = {error: 'NO CONNECTION'};
-                        bar.tick(0, {title: 'NO CONNECTION'});
-                        fs.writeFileSync(path.join(dir, name), JSON.stringify(
-                            params.downloat, null, 2));
-                        return resolve(params);
-                    }
-                }
-                percent = r && parseInt((r.req.connection._bytesDispatched * 100 / size).toFixed(0)) > 0
-                    ? parseInt((r.req.connection._bytesDispatched * 100 / size).toFixed(0))
-                    : 0;
-                load = percent - bar.curr - 0.05 > 0
-                    ? percent - bar.curr - 0.05
-                    : 0;
-            }, 500);
         });
 
     };
