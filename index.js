@@ -42,7 +42,7 @@ module.exports = (params = {}) => {
                 },
                 json: true
             }, (error, res, body) => {
-                clearInterval(si);
+                if (si) clearInterval(si);
                 if (error) {
                     params.downloat[id].uploat = {error: 'ERROR REQUEST'};
                     bar.tick(bar.total - bar.curr, {title: 'ERROR REQUEST'});
@@ -128,7 +128,7 @@ module.exports = (params = {}) => {
                 } else {
                     disable++;
                     if (disable >= 7200) {
-                        clearInterval(si);
+                        if (si) clearInterval(si);
                         params.downloat[id].uploat = {error: 'NO CONNECTION'};
                         bar.tick(0, {title: 'NO CONNECTION'});
                         fs.writeFileSync(path.join(dir, name), JSON.stringify(
@@ -136,7 +136,7 @@ module.exports = (params = {}) => {
                         return resolve(params);
                     }
                 }
-                percent = parseInt((r.req.connection._bytesDispatched * 100 / size).toFixed(0)) > 0
+                percent = r && parseInt((r.req.connection._bytesDispatched * 100 / size).toFixed(0)) > 0
                     ? parseInt((r.req.connection._bytesDispatched * 100 / size).toFixed(0))
                     : 0;
                 load = percent - bar.curr - 0.05 > 0
